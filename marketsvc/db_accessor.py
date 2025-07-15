@@ -2,14 +2,13 @@ import logging
 import sqlite3
 
 from db.init_db import DB_PATH
-
+from db.base import engine
+from sqlalchemy import text
 
 def execute_query(query, params):
-    with sqlite3.connect(DB_PATH) as conn:
-        cur = conn.cursor()
-        cur.execute(query, params)
-        rows = cur.fetchall()
-        return rows
+    with engine.connect() as conn:
+        return conn.execute(text(query), params)
+
 
 
 def execute_insert_query(query, params):
@@ -32,6 +31,11 @@ def get_customers():
     rows = execute_query("SELECT * FROM customer", {})
     return rows
 
+def get_customer(id):
+     with engine.connect() as conn:
+        return conn.execute(
+            text("SELECT * FROM customer WHERE id=:customer_id"),
+            {"customer_id": id})
 
 def get_orders_of_customer(customer_id):
     rows = execute_query(

@@ -6,6 +6,7 @@ from db_accessor import (
     get_orders_between_dates,
     get_orders_of_customer,
     get_total_cost_of_an_order,
+    get_customer
 )
 from fastapi import Body, FastAPI, HTTPException, status
 
@@ -16,11 +17,17 @@ app = FastAPI(debug=True)
 def hello():
     return "Welcome to Marketplace!"
 
-
 @app.get("/api/customers")
 def customers():
-    return get_customers()
+    customers = get_customers()
+    return (customer._asdict() for customer in customers)
 
+
+@app.get("/api/customer/{id}")
+def customer(id: int):
+    customer = get_customer(id)
+    print(dir(customer))
+    return 1
 
 @app.get("/api/orders/{cust_id}")
 def orders(cust_id: int):
